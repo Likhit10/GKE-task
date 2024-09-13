@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dynatrace-oneagent
+  namespace: dynatrace
+  labels:
+    app: dynatrace-oneagent
+spec:
+  selector:
+    matchLabels:
+      app: dynatrace-oneagent
+  template:
+    metadata:
+      labels:
+        app: dynatrace-oneagent
+    spec:
+      containers:
+        - name: dynatrace-oneagent
+          image: dynatrace/oneagent:latest
+          env:
+            - name: ONEAGENT_INSTALLER_SCRIPT_URL
+              value: "<your-oneagent-installer-url>"
+            - name: ONEAGENT_INSTALLER_SCRIPT_TOKEN
+              value: "<your-oneagent-token>"
+            - name: ONEAGENT_INSTALLER_SCRIPT_ARGS
+              value: "--set-host-group=test"
+          volumeMounts:
+            - name: oneagent-data
+              mountPath: /var/lib/dynatrace
+            - name: oneagent-logs
+              mountPath: /var/log/dynatrace
+      volumes:
+        - name: oneagent-data
+          emptyDir: {}
+        - name: oneagent-logs
+          emptyDir: {}
